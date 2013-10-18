@@ -31,6 +31,15 @@ namespace MongoDB.Repository
                 return client.Collection.FindOneAs<T>(Query<T>.Where(where));
             }
         }
+
+        internal static IEnumerable<T> DBFindAll<T>()where T:IEntity 
+        {
+            using (IDBClient client = DBFactory.GetClient(typeof (T)))
+            {
+                return client.Collection.FindAllAs<T>();
+            }
+        }
+
         internal static bool DBRemove<T>(string id) where T : IEntity
         {
             using (IDBClient client = DBFactory.GetClient(typeof(T)))
@@ -99,5 +108,21 @@ namespace MongoDB.Repository
             }
         }
 
+        internal static long Count<T>() where T : IEntity
+        {
+            using (IDBClient client = DBFactory.GetClient(typeof(T)))
+            {
+                return client.Collection.Count();
+            }
+        }
+
+        internal static long Count<T>(Expression<Func<T, bool>> condition) where T : IEntity
+        {
+            using (IDBClient client = DBFactory.GetClient(typeof(T)))
+            {
+                var queryable = client.Collection.FindAs<T>(Query<T>.Where(condition)).AsQueryable();
+                return queryable.Count();
+            }
+        }
     }
 }
