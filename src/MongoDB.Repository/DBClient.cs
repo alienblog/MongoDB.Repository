@@ -1,24 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using MongoDB.Driver;
+using MongoDB.Driver.GridFS;
 
 namespace MongoDB.Repository
 {
     public class DBClient : IDBClient
     {
-        private MongoClient client;
-        private string dbName;
-        Type type;
+        private MongoClient _client;
+        private string _dbName;
+        Type _type;
         public DBClient(MongoUrl url, Type type)
         {
-            dbName = url.DatabaseName;
-            this.type = type;
-            client = new MongoClient(url);
+            _dbName = url.DatabaseName;
+            _type = type;
+            _client = new MongoClient(url);
         }
+
+        public DBClient(MongoUrl url)
+        {
+            _dbName = url.DatabaseName;
+            _client = new MongoClient(url);
+        }
+
         /// <summary>
         /// database name
         /// </summary>
@@ -26,7 +30,7 @@ namespace MongoDB.Repository
         {
             get
             {
-                return dbName;
+                return _dbName;
             }
         }
         /// <summary>
@@ -36,7 +40,19 @@ namespace MongoDB.Repository
         {
             get
             {
-                return client.GetServer().GetDatabase(DBName).GetCollection(type.Name);
+                if (_type == null)
+                {
+                    throw new NotSupportedException("Wrong Init Function，If you want use this property,you should instantiated by DBClient(MongoUrl,Type)");
+                }
+                return _client.GetServer().GetDatabase(DBName).GetCollection(_type.Name);
+            }
+        }
+
+        public MongoGridFS GridFs
+        {
+            get
+            {
+                return _client.GetServer().GetDatabase(DBName).GridFS;
             }
         }
 
@@ -53,16 +69,16 @@ namespace MongoDB.Repository
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!m_disposed)
+            if (!_mDisposed)
             {
                 if (disposing)
                 {
-                    client = null;
-                    type = null;
-                    dbName = null;
+                    _client = null;
+                    _type = null;
+                    _dbName = null;
                 }
                 // Release unmanaged resources
-                m_disposed = true;
+                _mDisposed = true;
             }
         }
         ~DBClient()
@@ -70,7 +86,7 @@ namespace MongoDB.Repository
             Dispose(false);
         }
 
-        private bool m_disposed;
+        private bool _mDisposed;
         #endregion
     }
 }

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MongoDB.Driver;
 
 namespace MongoDB.Repository
@@ -15,9 +12,9 @@ namespace MongoDB.Repository
     {
         static MongoDBRepository()
         {
-            contexts = new List<IRegistrationContext>();
+            Contexts = new List<IRegistrationContext>();
         }
-        static List<IRegistrationContext> contexts;
+        static readonly List<IRegistrationContext> Contexts;
 
         /// <summary>
         /// register IMongoDBContext if not exists
@@ -25,12 +22,12 @@ namespace MongoDB.Repository
         /// <param name="dbContext"></param>
         public static void RegisterMongoDBContext(IMongoDBContext dbContext)
         {
-            if (contexts.Exists(c => c.Code == dbContext.GetType().FullName))
+            if (Contexts.Exists(c => c.Code == dbContext.GetType().FullName))
                 return;
 
             IRegistrationContext context = new RegistrationContext();
             context.RegisterDBContext(dbContext);
-            contexts.Add(context);
+            Contexts.Add(context);
         }
 
         /// <summary>
@@ -40,7 +37,7 @@ namespace MongoDB.Repository
         /// <returns></returns>
         internal static MongoUrl GetConfig(Type type)
         {
-            var context = contexts.SingleOrDefault(c => c.IsRegisterType(type));
+            var context = Contexts.SingleOrDefault(c => c.IsRegisterType(type));
             if (context == null) return null;
             return context.GetMongoUrl();
         }
@@ -57,24 +54,24 @@ namespace MongoDB.Repository
         /// <summary>
         /// register collection type for IMongoDBContext
         /// </summary>
-        /// <param name="DBContextType">IMongoDBContext</param>
-        /// <param name="EntityType">collection type</param>
-        public static void RegisterType(Type DBContextType, Type EntityType)
+        /// <param name="dbContextType">IMongoDBContext</param>
+        /// <param name="entityType">collection type</param>
+        public static void RegisterType(Type dbContextType, Type entityType)
         {
-            if (!contexts.Exists(c => c.Code == DBContextType.FullName)) throw new MongoException("Unregisterd MongoDBContext");
+            if (!Contexts.Exists(c => c.Code == dbContextType.FullName)) throw new MongoException("Unregisterd MongoDBContext");
 
-            var context = contexts.SingleOrDefault(c => c.Code == DBContextType.FullName);
+            var context = Contexts.SingleOrDefault(c => c.Code == dbContextType.FullName);
             if (context == null) throw new MongoException("Unregisterd MongoDBContext");
-            context.RegisterType(EntityType);
+            context.RegisterType(entityType);
         }
         /// <summary>
         /// register collection type for IMongoDBContext
         /// </summary>
-        /// <typeparam name="DBContextType">IMongoDBContext</typeparam>
-        /// <typeparam name="EntityType">collection type</typeparam>
-        public static void RegisterType<DBContextType, EntityType>()
+        /// <typeparam name="TDBContextType">IMongoDBContext</typeparam>
+        /// <typeparam name="TEntityType">collection type</typeparam>
+        public static void RegisterType<TDBContextType, TEntityType>()
         {
-            RegisterType(typeof(DBContextType), typeof(EntityType));
+            RegisterType(typeof(TDBContextType), typeof(TEntityType));
         }
         /// <summary>
         /// is register collection type
@@ -83,7 +80,7 @@ namespace MongoDB.Repository
         /// <returns></returns>
         public static bool IsRegisterType(Type type)
         {
-            return contexts.Exists(c => c.IsRegisterType(type));
+            return Contexts.Exists(c => c.IsRegisterType(type));
         }
         /// <summary>
         /// is register collection type
@@ -100,7 +97,7 @@ namespace MongoDB.Repository
         /// <param name="type">collection type</param>
         public static void UnregisterType(Type type)
         {
-            contexts.ForEach(delegate(IRegistrationContext context)
+            Contexts.ForEach(delegate(IRegistrationContext context)
             {
                 context.UnregisterType(type);
             });
@@ -116,9 +113,15 @@ namespace MongoDB.Repository
 
         public static void UnregisterDBContext<TDBContext>() where TDBContext : IMongoDBContext
         {
-            contexts.RemoveAll(registeration => registeration.Code == typeof(TDBContext).FullName);
+            Contexts.RemoveAll(registeration => registeration.Code == typeof(TDBContext).FullName);
         }
 
+        public static MongoUrl GetMongoUrl()
+        {
+            var context = Contexts.FirstOrDefault();
+            if (context == null) throw new MongoException("Have No MongoDBContext");
+            return context.GetMongoUrl();
+        }
     }
 
 }

@@ -53,6 +53,8 @@
     <Compile Include="DBFactory.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="EntityOperationExtensions.cs" />
+    <Compile Include="GridFs\File.cs" />
+    <Compile Include="GridFs\GridfsRepository.cs" />
     <Compile Include="IRegistrationContext.cs" />
     <Compile Include="RegistrationContext.cs" />
     <Compile Include="ITypeRegistration.cs" />
@@ -68,6 +70,7 @@
   <ItemGroup>
     <Content Include="ReadMe.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>$(SolutionDir)tools\ilmerge /target:library /out:$(TargetDir)MongoDB.dll /targetplatform:v4 /log $(ProjectDir)$(OutDir)MongoDB.Driver.dll $(ProjectDir)$(OutDir)MongoDB.Bson.dll $(ProjectDir)$(OutDir)MongoDB.Repository.dll</PostBuildEvent>

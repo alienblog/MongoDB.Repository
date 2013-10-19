@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using MongoDB.Driver.Builders;
 
 namespace MongoDB.Repository
@@ -83,7 +81,7 @@ namespace MongoDB.Repository
         {
             using (IDBClient client = DBFactory.GetClient(entity.GetType()))
             {
-                client.Collection.Save<T>(entity);
+                client.Collection.Save(entity);
             }
         }
         internal static void DBSave(Type type, object entity)
@@ -97,7 +95,7 @@ namespace MongoDB.Repository
         {
             using (IDBClient client = DBFactory.GetClient(typeof(T)))
             {
-                entitys.ForEach(e => client.Collection.Save<T>(e));
+                entitys.ForEach(e => client.Collection.Save(e));
             }
         }
         internal static bool DBRemove<T>(this T entity) where T : IEntity

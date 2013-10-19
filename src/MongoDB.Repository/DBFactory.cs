@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 using MongoDB.Driver;
@@ -29,6 +30,16 @@ namespace MongoDB.Repository
         public static IDBClient GetClient<T>() where T : IEntity
         {
             return GetClient(typeof(T));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static IDBClient GetClient()
+        {
+            var url = MongoDBRepository.GetMongoUrl();
+            return new DBClient(url);
         }
     }
 }
