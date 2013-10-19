@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\MongoDB.Repository.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\MongoDB.Repository.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="MongoDB.Bson, Version=1.8.2.34, Culture=neutral, PublicKeyToken=f686731cfb9cc103, processorArchitecture=MSIL">
@@ -73,7 +75,7 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>$(SolutionDir)tools\ilmerge /target:library /out:$(TargetDir)MongoDB.dll /targetplatform:v4 /log $(ProjectDir)$(OutDir)MongoDB.Driver.dll $(ProjectDir)$(OutDir)MongoDB.Bson.dll $(ProjectDir)$(OutDir)MongoDB.Repository.dll</PostBuildEvent>
+    <PostBuildEvent>$(SolutionDir)tools\ilmerge /xmldocs /target:library /out:$(TargetDir)MongoDB.dll /targetplatform:v4 /log $(ProjectDir)$(OutDir)MongoDB.Driver.dll $(ProjectDir)$(OutDir)MongoDB.Bson.dll $(ProjectDir)$(OutDir)MongoDB.Repository.dll</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

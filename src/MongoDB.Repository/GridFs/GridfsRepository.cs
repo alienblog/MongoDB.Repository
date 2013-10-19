@@ -18,7 +18,8 @@ namespace MongoDB.Repository.GridFs
             var file = new File();
             using (var client = DBFactory.GetClient())
             {
-                var fsInfo = client.GridFs.FindOneById(id);
+                var oid = new ObjectId(id);
+                var fsInfo = client.GridFs.FindOne(Query.EQ("_id", oid));
 
                 var stream = fsInfo.OpenRead();
                 file.Data = new byte[stream.Length];

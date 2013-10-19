@@ -71,5 +71,23 @@ namespace MongoDB.Repository.GridFs
             var repository = new GridfsRepository();
             repository.Delete(Id);
         }
+
+        public void Load()
+        {
+            if (string.IsNullOrEmpty(Id)) return;
+            var repository = new GridfsRepository();
+
+            var info = repository.Find(Id);
+
+            _data = info.Data;
+            MD5 = info.MD5;
+            FileName = info.FileName;
+        }
+
+        public void Load(string id)
+        {
+            Id = id;
+            Load();
+        }
     }
 }
